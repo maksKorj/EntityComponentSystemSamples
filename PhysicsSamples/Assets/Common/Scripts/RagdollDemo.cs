@@ -110,6 +110,8 @@ public partial class RagdollDemoSystem : SceneCreationSystem<RagdollDemoScene>
         var entities = new NativeList<Entity>(Allocator.Temp);
         var rangeModifier = new float2(math.max(0, math.min(rangeGain, 1)));
 
+        Debug.LogError("Creating Ragdoll");
+
         // Head
         float headRadius = 0.1f;
         float3 headPosition = new float3(0, 1.8f, headRadius);
@@ -463,7 +465,7 @@ public partial class RagdollDemoSystem : SceneCreationSystem<RagdollDemoScene>
 
             var position = new float3(xOffset * 5, yOffset, xOffset * 0.1f);
             var rotation = quaternion.Euler(math.radians(45), -xOffset * math.radians(90), 0);
-            var velocity = new float3(xSpeed, math.abs(xSpeed), 0);
+            var velocity = new float3(0, 0, 0);
 
             position = math.transform(sceneSettings.Transform, position);
             rotation = math.mul(sceneSettings.Transform.rot, rotation);

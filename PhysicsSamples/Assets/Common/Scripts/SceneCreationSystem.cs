@@ -1,3 +1,4 @@
+using _0_Project.Scripts;
 using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
@@ -135,7 +136,12 @@ public abstract partial class SceneCreationSystem<T> : SystemBase
     public Entity CreateDynamicBody(float3 position, quaternion orientation, BlobAssetReference<Collider> collider,
         float3 linearVelocity, float3 angularVelocity, float mass)
     {
-        return CreateBody(position, orientation, collider, linearVelocity, angularVelocity, mass, true);
+        var body = CreateBody(position, orientation, collider, linearVelocity, angularVelocity, mass, true);
+
+        var entityManager = World.DefaultGameObjectInjectionWorld.EntityManager;
+        entityManager.AddComponentData(body, new MuscleComponent(stabForce: 2f));
+
+        return body;
     }
 
     public Entity CreateJoint(PhysicsJoint joint, Entity entityA, Entity entityB, bool enableCollision = false)

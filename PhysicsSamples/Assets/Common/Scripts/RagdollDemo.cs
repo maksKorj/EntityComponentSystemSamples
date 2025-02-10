@@ -1,3 +1,4 @@
+using _0_Project.Scripts;
 using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
@@ -126,6 +127,8 @@ public partial class RagdollDemoSystem : SceneCreationSystem<RagdollDemoScene>
             }, filter);
             CreatedColliders.Add(headCollider);
             head = CreateDynamicBody(headPosition, quaternion.identity, headCollider, float3.zero, float3.zero, 5.0f);
+
+            World.DefaultGameObjectInjectionWorld.EntityManager.AddComponentData(head, new MuscleComponent(stabForce: 20f));
         }
         entities.Add(head);
 
@@ -152,6 +155,8 @@ public partial class RagdollDemoSystem : SceneCreationSystem<RagdollDemoScene>
             points.Dispose();
             collider.Value.SetCollisionFilter(filter);
             torso = CreateDynamicBody(torsoPosition, quaternion.identity, collider, float3.zero, float3.zero, 20.0f);
+
+            World.DefaultGameObjectInjectionWorld.EntityManager.AddComponentData(torso, new MuscleComponent(stabForce: 50f));
         }
         entities.Add(torso);
 
@@ -221,6 +226,10 @@ public partial class RagdollDemoSystem : SceneCreationSystem<RagdollDemoScene>
                 Entity foreArm = CreateDynamicBody(foreArmPosition, quaternion.identity, foreArmCollider, float3.zero, float3.zero, 5.0f);
                 float3 handPosition = foreArmPosition + new float3((armLength + handLength) / 2.0f * s, 0, 0);
                 Entity hand = CreateDynamicBody(handPosition, quaternion.identity, handCollider, float3.zero, float3.zero, 2.0f);
+
+                //World.DefaultGameObjectInjectionWorld.EntityManager.AddComponentData(torso, new MuscleComponent(stabForce: 20f));
+                World.DefaultGameObjectInjectionWorld.EntityManager.AddComponentData(foreArm, new MuscleComponent(stabForce: 1f));
+                World.DefaultGameObjectInjectionWorld.EntityManager.AddComponentData(hand, new MuscleComponent(stabForce: 1f));
 
                 entities.Add(upperArm);
                 entities.Add(foreArm);
@@ -294,6 +303,10 @@ public partial class RagdollDemoSystem : SceneCreationSystem<RagdollDemoScene>
             pelvis = CreateDynamicBody(pelvisPosition, quaternion.identity, collider, float3.zero, float3.zero, 15.0f);
             CreatedColliders.Add(collider);
         }
+
+
+        World.DefaultGameObjectInjectionWorld.EntityManager.AddComponentData(pelvis, new MuscleComponent(stabForce: 40f));
+
         entities.Add(pelvis);
 
         // Waist
@@ -359,6 +372,9 @@ public partial class RagdollDemoSystem : SceneCreationSystem<RagdollDemoScene>
                 Entity calf = CreateDynamicBody(calfPosition, quaternion.identity, calfCollider, float3.zero, float3.zero, 5.0f);
                 float3 footPosition = calfPosition + new float3(0, -calfLength / 2.0f, 0);
                 Entity foot = CreateDynamicBody(footPosition, quaternion.identity, footCollider, float3.zero, float3.zero, 2.0f);
+
+                World.DefaultGameObjectInjectionWorld.EntityManager.AddComponentData(thigh, new MuscleComponent(stabForce: 2f));
+                World.DefaultGameObjectInjectionWorld.EntityManager.AddComponentData(foot, new MuscleComponent(stabForce: -500f));
 
                 entities.Add(thigh);
                 entities.Add(calf);

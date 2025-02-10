@@ -137,10 +137,6 @@ public abstract partial class SceneCreationSystem<T> : SystemBase
         float3 linearVelocity, float3 angularVelocity, float mass)
     {
         var body = CreateBody(position, orientation, collider, linearVelocity, angularVelocity, mass, true);
-
-        var entityManager = World.DefaultGameObjectInjectionWorld.EntityManager;
-        entityManager.AddComponentData(body, new MuscleComponent(stabForce: 2f));
-
         return body;
     }
 

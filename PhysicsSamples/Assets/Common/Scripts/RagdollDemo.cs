@@ -77,7 +77,7 @@ public partial class RagdollDemoSystem : SceneCreationSystem<RagdollDemoScene>
     {
         return new CollisionFilter
         {
-            BelongsTo = 4294967295,
+            BelongsTo = 1 << 11,
             CollidesWith = 4294967295,
             GroupIndex = groupIndex
         };
@@ -113,6 +113,10 @@ public partial class RagdollDemoSystem : SceneCreationSystem<RagdollDemoScene>
 
         Debug.LogError("Creating Ragdoll");
 
+        var entityManager = World.DefaultGameObjectInjectionWorld.EntityManager;
+        var ragdollEntity = entityManager.CreateEntity(new ComponentType[] {});
+        var ragdollComponent = new RagdollComponent();
+
         // Head
         float headRadius = 0.1f;
         float3 headPosition = new float3(0, 1.8f, headRadius);
@@ -128,7 +132,8 @@ public partial class RagdollDemoSystem : SceneCreationSystem<RagdollDemoScene>
             CreatedColliders.Add(headCollider);
             head = CreateDynamicBody(headPosition, quaternion.identity, headCollider, float3.zero, float3.zero, 5.0f);
 
-            World.DefaultGameObjectInjectionWorld.EntityManager.AddComponentData(head, new MuscleComponent(stabForce: 20f));
+            entityManager.AddComponentData(head, new MuscleComponent(stabForce: 20f));
+            ragdollComponent.MuscleEntities.Add(head);
         }
         entities.Add(head);
 
@@ -156,7 +161,8 @@ public partial class RagdollDemoSystem : SceneCreationSystem<RagdollDemoScene>
             collider.Value.SetCollisionFilter(filter);
             torso = CreateDynamicBody(torsoPosition, quaternion.identity, collider, float3.zero, float3.zero, 20.0f);
 
-            World.DefaultGameObjectInjectionWorld.EntityManager.AddComponentData(torso, new MuscleComponent(stabForce: 50f));
+            entityManager.AddComponentData(torso, new MuscleComponent(stabForce: 50f));
+            ragdollComponent.MuscleEntities.Add(torso);
         }
         entities.Add(torso);
 
@@ -227,9 +233,12 @@ public partial class RagdollDemoSystem : SceneCreationSystem<RagdollDemoScene>
                 float3 handPosition = foreArmPosition + new float3((armLength + handLength) / 2.0f * s, 0, 0);
                 Entity hand = CreateDynamicBody(handPosition, quaternion.identity, handCollider, float3.zero, float3.zero, 2.0f);
 
-                //World.DefaultGameObjectInjectionWorld.EntityManager.AddComponentData(torso, new MuscleComponent(stabForce: 20f));
-                World.DefaultGameObjectInjectionWorld.EntityManager.AddComponentData(foreArm, new MuscleComponent(stabForce: 1f));
-                World.DefaultGameObjectInjectionWorld.EntityManager.AddComponentData(hand, new MuscleComponent(stabForce: 1f));
+                //entityManager.AddComponentData(torso, new MuscleComponent(stabForce: 20f));
+
+                entityManager.AddComponentData(foreArm, new MuscleComponent(stabForce: 1f));
+                ragdollComponent.MuscleEntities.Add(foreArm);
+                entityManager.AddComponentData(hand, new MuscleComponent(stabForce: 1f));
+                ragdollComponent.MuscleEntities.Add(hand);
 
                 entities.Add(upperArm);
                 entities.Add(foreArm);
@@ -305,8 +314,8 @@ public partial class RagdollDemoSystem : SceneCreationSystem<RagdollDemoScene>
         }
 
 
-        World.DefaultGameObjectInjectionWorld.EntityManager.AddComponentData(pelvis, new MuscleComponent(stabForce: 40f));
-
+        entityManager.AddComponentData(pelvis, new MuscleComponent(stabForce: 40f));
+        ragdollComponent.MuscleEntities.Add(pelvis);
         entities.Add(pelvis);
 
         // Waist
@@ -373,8 +382,12 @@ public partial class RagdollDemoSystem : SceneCreationSystem<RagdollDemoScene>
                 float3 footPosition = calfPosition + new float3(0, -calfLength / 2.0f, 0);
                 Entity foot = CreateDynamicBody(footPosition, quaternion.identity, footCollider, float3.zero, float3.zero, 2.0f);
 
-                World.DefaultGameObjectInjectionWorld.EntityManager.AddComponentData(thigh, new MuscleComponent(stabForce: 2f));
-                World.DefaultGameObjectInjectionWorld.EntityManager.AddComponentData(foot, new MuscleComponent(stabForce: -500f));
+                entityManager.AddComponentData(thigh, new MuscleComponent(stabForce: 2f));
+                ragdollComponent.MuscleEntities.Add(thigh);
+
+                entityManager.AddComponentData(foot, new MuscleComponent(stabForce: -500f));
+                entityManager.AddComponentData(foot, new FootComponent());
+                ragdollComponent.MuscleEntities.Add(foot);
 
                 entities.Add(thigh);
                 entities.Add(calf);
@@ -469,6 +482,8 @@ public partial class RagdollDemoSystem : SceneCreationSystem<RagdollDemoScene>
                 EntityManager.SetComponentData<LocalTransform>(e, localTransformComponent);
             }
         }
+
+        entityManager.AddComponentData(ragdollEntity, ragdollComponent);
     }
 
     public override void CreateScene(RagdollDemoScene sceneSettings)

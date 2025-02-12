@@ -1,11 +1,14 @@
 ﻿using Unity.Collections;
 using Unity.Entities;
+using Unity.Mathematics;
 
 namespace _0_Project.Scripts
 {
     public struct RagdollComponent : IComponentData
     {
         public bool IsGrounded;
+        public float3 MovementDirection;
+
         public FixedList128Bytes<Entity> MuscleEntities;
     }
 
@@ -19,5 +22,10 @@ namespace _0_Project.Scripts
             StabForce = stabForce;
             ApplyForce = applyForce;
         }
+    }
+
+    public struct TorsoComponent : IComponentData
+    {
+        public float RotationSpeed;
     }
 }

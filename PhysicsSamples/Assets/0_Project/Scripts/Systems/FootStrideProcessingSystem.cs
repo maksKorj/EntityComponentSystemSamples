@@ -1,79 +1,91 @@
+using _0_Project.Scripts;
 using Unity.Burst;
 using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
 using Unity.Physics;
 
-namespace _0_Project.Scripts.Systems
+[BurstCompile]
+public partial struct FootStrideProcessingSystem : ISystem
 {
-    [BurstCompile]
-    public partial struct FootStrideProcessingSystem : ISystem
+    [ReadOnly] private ComponentLookup<StrideComponent> _strideLookup;
+    [ReadOnly] private ComponentLookup<FootMotionComponent> _footMotionLookup;
+    private ComponentLookup<PhysicsVelocity> _physicsVelocityLookup;
+
+    public void OnCreate(ref SystemState state)
     {
-        [ReadOnly] private ComponentLookup<StrideComponent> _strideLookup;
-        [ReadOnly] private ComponentLookup<FootMotionComponent> _footMotionLookup;
-        private ComponentLookup<PhysicsVelocity> _physicsVelocityLookup;
+        _footMotionLookup = state.GetComponentLookup<FootMotionComponent>(isReadOnly: true);
+        _strideLookup = state.GetComponentLookup<StrideComponent>(isReadOnly: true);
+        _physicsVelocityLookup = state.GetComponentLookup<PhysicsVelocity>(isReadOnly: false);
+    }
 
-        public void OnCreate(ref SystemState state)
+    public void OnUpdate(ref SystemState state)
+    {
+        float deltaTime = SystemAPI.Time.DeltaTime;
+
+        _strideLookup.Update(ref state);
+        _footMotionLookup.Update(ref state);
+        _physicsVelocityLookup.Update(ref state);
+
+        var strideLookup = _strideLookup;
+        var footMotionLookup = _footMotionLookup;
+        var physicsVelocityLookup = _physicsVelocityLookup;
+
+        var ecb = new EntityCommandBuffer(Allocator.TempJob);
+        var ecbParallel = ecb.AsParallelWriter();
+
+        state.Dependency = new FootStrideJob
         {
-            _footMotionLookup = state.GetComponentLookup<FootMotionComponent>(isReadOnly: true);
-            _strideLookup = state.GetComponentLookup<StrideComponent>(isReadOnly: true);
-            _physicsVelocityLookup = state.GetComponentLookup<PhysicsVelocity>(isReadOnly: false);
-        }
+            StrideLookup = strideLookup,
+            FootMotionLookup = footMotionLookup,
+            PhysicsVelocityLookup = physicsVelocityLookup,
+            DeltaTime = deltaTime,
+            ECB = ecbParallel
+        }.ScheduleParallel(state.Dependency);
 
-        public void OnUpdate(ref SystemState state)
+        state.Dependency.Complete();
+        ecb.Playback(state.EntityManager); 
+        ecb.Dispose();
+    }
+
+    [BurstCompile]
+    private partial struct FootStrideJob : IJobEntity
+    {
+        [ReadOnly] public ComponentLookup<StrideComponent> StrideLookup;
+        [ReadOnly] public ComponentLookup<FootMotionComponent> FootMotionLookup;
+        [ReadOnly] public ComponentLookup<PhysicsVelocity> PhysicsVelocityLookup;
+
+        public EntityCommandBuffer.ParallelWriter ECB;
+        public float DeltaTime;
+
+        public void Execute(RefRW<RagdollComponent> ragdoll, Entity entity, [ChunkIndexInQuery] int chunkIndex)
         {
-            state.Dependency.Complete();
+            if (!ragdoll.ValueRO.IsGrounded) return;
 
-            float deltaTime = SystemAPI.Time.DeltaTime;
-
-            _strideLookup.Update(ref state);
-            _footMotionLookup.Update(ref state);
-            _physicsVelocityLookup.Update(ref state);
-
-            foreach (var (ragdoll, entity) in SystemAPI.Query<RefRW<RagdollComponent>>().WithEntityAccess())
+            int index = 0;
+            if (StrideLookup.HasComponent(entity))
             {
-                if(ragdoll.ValueRW.IsGrounded == false)
+                index = StrideLookup[entity].CurrentLegIndex;
+            }
+
+            foreach (var muscleEntity in ragdoll.ValueRO.MuscleEntities)
+            {
+                if (!FootMotionLookup.HasComponent(muscleEntity))
                     continue;
-                
-                int index = 0;
-                if (_strideLookup.HasComponent(entity))
+
+                if (!PhysicsVelocityLookup.HasComponent(muscleEntity))
+                    continue;
+
+                var footMotion = FootMotionLookup[muscleEntity];
+                if (footMotion.Index != index)
+                    continue;
+
+                ECB.SetComponent(chunkIndex, muscleEntity, new PhysicsVelocity
                 {
-                    index = _strideLookup[entity].CurrentLegIndex;
-                }
-
-                foreach (var muscleEntity in ragdoll.ValueRW.MuscleEntities)
-                {
-                    if (!_footMotionLookup.HasComponent(muscleEntity))
-                        continue;
-
-                    if(!_physicsVelocityLookup.HasComponent(muscleEntity))
-                        continue;
-
-                    var footMotion = _footMotionLookup[muscleEntity];
-                    if(footMotion.Index != index)
-                        continue;
-
-                    var velocity = _physicsVelocityLookup[muscleEntity];
-                    velocity.Linear += new float3(footMotion.Force, footMotion.Force, 0) * deltaTime;
-                    _physicsVelocityLookup[muscleEntity] = velocity;
-                }
+                    Linear = PhysicsVelocityLookup[muscleEntity].Linear + new float3(footMotion.Force, footMotion.Force, 0) * DeltaTime,
+                    Angular = PhysicsVelocityLookup[muscleEntity].Angular
+                });
             }
         }
     }
-
-    /*[BurstCompile]
-    public partial struct FootStrideProcessingJob : IJobEntity
-    {
-        public float DeltaTime;
-
-        private void Execute(ref StrideComponent stride)
-        {
-            stride.Timer -= DeltaTime;
-            if(stride.Timer >  0)
-                return;
-
-            stride.Timer = 0.35f;
-            stride.CurrentLegIndex ^= 1;
-        }
-    }*/
 }

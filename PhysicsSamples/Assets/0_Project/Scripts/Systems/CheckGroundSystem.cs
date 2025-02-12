@@ -22,10 +22,12 @@ namespace _0_Project.Scripts.Systems
         {
             var collisionWorld = SystemAPI.GetSingleton<PhysicsWorldSingleton>().CollisionWorld;
 
-            new CheckGroundJob
+            var jobHandle = new CheckGroundJob
             {
                 CollisionWorld = collisionWorld
-            }.ScheduleParallel();
+            }.ScheduleParallel(state.Dependency);
+
+            state.Dependency = jobHandle;
         }
     }
 

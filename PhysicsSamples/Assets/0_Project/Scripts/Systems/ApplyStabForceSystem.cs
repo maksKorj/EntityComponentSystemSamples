@@ -27,6 +27,9 @@ namespace _0_Project.Scripts.Systems
 
         private void Execute(ref PhysicsVelocity velocity, in MuscleComponent muscle)
         {
+            if(muscle.ApplyForce == false)
+                return;
+
             velocity.Linear += new float3(0, muscle.StabForce * DeltaTime, 0);
         }
     }

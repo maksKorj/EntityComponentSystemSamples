@@ -5,6 +5,7 @@ namespace _0_Project.Scripts
 {
     public struct RagdollComponent : IComponentData
     {
+        public bool IsGrounded;
         public FixedList128Bytes<Entity> MuscleEntities;
     }
 
@@ -18,10 +19,5 @@ namespace _0_Project.Scripts
             StabForce = stabForce;
             ApplyForce = applyForce;
         }
-    }
-
-    public struct FootComponent : IComponentData
-    {
-        public bool IsGrounded;
     }
 }

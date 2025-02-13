@@ -162,6 +162,7 @@ public partial class RagdollDemoSystem : SceneCreationSystem<RagdollDemoScene>
             torso = CreateDynamicBody(torsoPosition, quaternion.identity, collider, float3.zero, float3.zero, 20.0f);
 
             entityManager.AddComponentData(torso, new MuscleComponent(stabForce: 50f));
+            entityManager.AddComponentData(torso, new TorsoComponent { RotationSpeed = 360f });
             ragdollComponent.MuscleEntities.Add(torso);
         }
         entities.Add(torso);

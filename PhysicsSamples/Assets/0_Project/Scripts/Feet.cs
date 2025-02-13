@@ -11,12 +11,14 @@ namespace _0_Project.Scripts
     public struct FootMotionComponent : IComponentData
     {
         public int Index;
-        public float Force;
+        public float StabForce;
+        public float MotionForce;
 
-        public FootMotionComponent(int index, float force)
+        public FootMotionComponent(int index, float stabForce, float motionForce)
         {
             Index = index;
-            Force = force;
+            StabForce = stabForce;
+            MotionForce = motionForce;
         }
     }
 

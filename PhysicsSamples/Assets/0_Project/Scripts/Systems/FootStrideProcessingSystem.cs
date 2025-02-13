@@ -3,6 +3,7 @@ using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
 using Unity.Physics;
+using UnityEngine;
 
 namespace _0_Project.Scripts.Systems
 {
@@ -61,7 +62,8 @@ namespace _0_Project.Scripts.Systems
 
             public void Execute(RefRW<RagdollComponent> ragdoll, Entity entity, [ChunkIndexInQuery] int chunkIndex)
             {
-                if (!ragdoll.ValueRO.IsGrounded) return;
+                if (!ragdoll.ValueRO.IsGrounded || math.all(ragdoll.ValueRW.MovementDirection == float3.zero))
+                    return;
 
                 int index = 0;
                 if (StrideLookup.HasComponent(entity))
@@ -78,14 +80,24 @@ namespace _0_Project.Scripts.Systems
                         continue;
 
                     var footMotion = FootMotionLookup[muscleEntity];
-                    if (footMotion.Index != index)
-                        continue;
+                    float3 force = new float3(0, 0, 0);
 
-                    var direction = ragdoll.ValueRW.MovementDirection;
+                    if (footMotion.Index != index)
+                    {
+                        if (footMotion.StabForce > 100)
+                            force.y = -500 * DeltaTime;
+                    }
+                    else
+                    {
+                        var direction = ragdoll.ValueRW.MovementDirection;
+                        force = new float3(direction.x * footMotion.MotionForce,
+                            footMotion.StabForce,
+                            direction.z * footMotion.MotionForce) * DeltaTime;
+                    }
+
                     ECB.SetComponent(chunkIndex, muscleEntity, new PhysicsVelocity
                     {
-                        Linear = PhysicsVelocityLookup[muscleEntity].Linear + new float3(direction.x * footMotion.Force,
-                            footMotion.Force, direction.z * footMotion.Force) * DeltaTime,
+                        Linear = force,
                         Angular = PhysicsVelocityLookup[muscleEntity].Angular
                     });
                 }
@@ -93,3 +105,5 @@ namespace _0_Project.Scripts.Systems
         }
     }
 }
+
+

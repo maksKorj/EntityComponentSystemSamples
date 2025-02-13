@@ -1,6 +1,7 @@
 ﻿using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
+using UnityEngine;
 
 namespace _0_Project.Scripts
 {
@@ -27,5 +28,10 @@ namespace _0_Project.Scripts
     public struct TorsoComponent : IComponentData
     {
         public float RotationSpeed;
+    }
+
+    public struct MovementTargetComponent : IComponentData
+    {
+        public float3 Position;
     }
 }

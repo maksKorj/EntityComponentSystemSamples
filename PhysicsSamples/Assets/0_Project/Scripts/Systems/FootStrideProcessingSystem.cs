@@ -7,7 +7,7 @@ using UnityEngine;
 
 namespace _0_Project.Scripts.Systems
 {
-    [BurstCompile]
+    [BurstCompile][UpdateAfter(typeof(ApplyStabForceSystem))]
     public partial struct FootStrideProcessingSystem : ISystem
     {
         [ReadOnly] private ComponentLookup<StrideComponent> _strideLookup;

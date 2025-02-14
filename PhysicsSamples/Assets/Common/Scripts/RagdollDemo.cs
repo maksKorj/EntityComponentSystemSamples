@@ -388,13 +388,13 @@ public partial class RagdollDemoSystem : SceneCreationSystem<RagdollDemoScene>
 
                 entityManager.AddComponentData(foot, new MuscleComponent(stabForce: -500f));
                 entityManager.AddComponentData(foot, new FootComponent());
-                entityManager.AddComponentData(foot, new FootMotionComponent(i, 400, 200));
+                entityManager.AddComponentData(foot, new FootMotionComponent(i, 150, 200));
                 ragdollComponent.MuscleEntities.Add(foot);
 
                 entities.Add(thigh);
 
                 entityManager.AddComponentData(calf, new MuscleComponent(stabForce: 0));
-                entityManager.AddComponentData(calf, new FootMotionComponent(i, 100, 100));
+                //entityManager.AddComponentData(calf, new FootMotionComponent(i, 50, 100));
                 ragdollComponent.MuscleEntities.Add(calf);
                 entities.Add(calf);
                 entities.Add(foot);

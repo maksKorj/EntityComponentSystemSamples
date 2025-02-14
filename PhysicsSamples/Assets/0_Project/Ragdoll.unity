@@ -149,9 +149,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1571474561}
-  - component: {fileID: 1571474560}
-  - component: {fileID: 1571474559}
-  - component: {fileID: 1571474558}
   - component: {fileID: 1571474557}
   m_Layer: 0
   m_Name: Physics Settings
@@ -184,61 +181,6 @@ MonoBehaviour:
   m_SynchronizeCollisionWorld: 0
   m_IncrementalDynamicBroadphase: 0
   m_IncrementalStaticBroadphase: 0
---- !u!114 &1571474558
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1571474555}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9c1f2299aae95eb4e80de7e4124130c9, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  HoverPrefab: {fileID: 1191054677816456, guid: 5847e3636a433e3428bdc22fad0f06fe,
-    type: 3}
-  IgnoreTriggers: 1
-  IgnoreStatic: 1
---- !u!114 &1571474559
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1571474555}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 140a4ee5d3253224a9e854c61748f606, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  IgnoreTriggers: 1
-  IgnoreStatic: 1
-  DeleteEntityOnClick: 0
---- !u!114 &1571474560
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1571474555}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: bb54ea4f67dc17342bcd49954c53502d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  DrawColliders: 0
-  DrawColliderEdges: 0
-  DrawColliderAabbs: 0
-  DrawMassProperties: 0
-  DrawBroadphase: 0
-  DrawContacts: 0
-  DrawCollisionEvents: 0
-  DrawTriggerEvents: 0
-  DrawJoints: 0
-  ColliderDisplayMode: 0
-  ColliderEdgesDisplayMode: 0
-  ColliderAabbDisplayMode: 0
 --- !u!4 &1571474561
 Transform:
   m_ObjectHideFlags: 0

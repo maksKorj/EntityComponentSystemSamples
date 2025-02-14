@@ -84,7 +84,7 @@ namespace _0_Project.Scripts.Systems
 
                     if (footMotion.Index != index)
                     {
-                        if (footMotion.StabForce > 100)
+                        //if (footMotion.StabForce > 100)
                             force.y = -500 * DeltaTime;
                     }
                     else

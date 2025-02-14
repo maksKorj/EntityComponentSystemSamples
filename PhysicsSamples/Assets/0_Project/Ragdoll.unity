@@ -302,7 +302,7 @@ MonoBehaviour:
   StaticMaterial: {fileID: 2100000, guid: 64716136fbbea404388c6534383d7b5e, type: 2}
   TorsoMesh: {fileID: 4300002, guid: f9287f85a82e0ca48a7c26c920f14b8b, type: 3}
   RenderMesh: {fileID: 10207, guid: 0000000000000000e000000000000000, type: 0}
-  NumberOfRagdolls: 1
+  NumberOfRagdolls: 100
   RangeGain: 0.5
 --- !u!1 &1871224616
 GameObject:

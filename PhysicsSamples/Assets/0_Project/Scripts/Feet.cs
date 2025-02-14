@@ -25,6 +25,8 @@ namespace _0_Project.Scripts
     public struct StrideComponent : IComponentData
     {
         public float Timer;
+
+        public float BaseTime;
         public int CurrentLegIndex;
     }
 }

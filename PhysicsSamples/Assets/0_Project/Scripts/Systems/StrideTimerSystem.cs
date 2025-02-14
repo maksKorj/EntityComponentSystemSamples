@@ -36,7 +36,7 @@ namespace _0_Project.Scripts.Systems
             if(stride.Timer >  0)
                 return;
 
-            stride.Timer = 0.35f;
+            stride.Timer = stride.BaseTime;
             stride.CurrentLegIndex ^= 1;
         }
     }

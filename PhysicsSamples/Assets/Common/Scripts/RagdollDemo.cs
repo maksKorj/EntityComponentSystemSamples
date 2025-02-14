@@ -162,7 +162,7 @@ public partial class RagdollDemoSystem : SceneCreationSystem<RagdollDemoScene>
             torso = CreateDynamicBody(torsoPosition, quaternion.identity, collider, float3.zero, float3.zero, 20.0f);
 
             entityManager.AddComponentData(torso, new MuscleComponent(stabForce: 50f));
-            entityManager.AddComponentData(torso, new TorsoComponent { RotationSpeed = 360f });
+            entityManager.AddComponentData(torso, new TorsoComponent { RotationSpeed = UnityEngine.Random.Range(400f, 650)});
             ragdollComponent.MuscleEntities.Add(torso);
         }
         entities.Add(torso);
@@ -388,7 +388,7 @@ public partial class RagdollDemoSystem : SceneCreationSystem<RagdollDemoScene>
 
                 entityManager.AddComponentData(foot, new MuscleComponent(stabForce: -500f));
                 entityManager.AddComponentData(foot, new FootComponent());
-                entityManager.AddComponentData(foot, new FootMotionComponent(i, 150, 200));
+                entityManager.AddComponentData(foot, new FootMotionComponent(i, 50, 200));
                 ragdollComponent.MuscleEntities.Add(foot);
 
                 entities.Add(thigh);
@@ -489,7 +489,7 @@ public partial class RagdollDemoSystem : SceneCreationSystem<RagdollDemoScene>
             }
         }
 
-        var stride = new StrideComponent();
+        var stride = new StrideComponent() { BaseTime = UnityEngine.Random.Range(0.25f, 0.45f) };
         entityManager.AddComponentData(ragdollEntity, stride);
         entityManager.AddComponentData(ragdollEntity, new MovementTargetComponent());
         entityManager.AddComponentData(ragdollEntity, ragdollComponent);
